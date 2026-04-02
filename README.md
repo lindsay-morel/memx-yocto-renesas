@@ -94,3 +94,20 @@ Return to the build folder and build the image as follows:
 ```bash
 MACHINE=smarc-rzg3e bitbake core-image-minimal
 ```
+
+Upon build completion, refer to the Renesas manual for details on installing the image onto your SD card.
+
+Before booting the RZ/G#E system, ensure that the VMX-004 M.2 module has been flashed with the appropriate firmware version. Download the `cascade_4chips_flash.bin` file from the following link:
+
+https://github.com/memryx/mx3_driver_pub/tree/sdk2p2/firmware
+
+Then, flash the module as follows:
+
+```bash
+sudo mxfw_pcie_update_flash -f ~/Downloads/cascade_4chips_flash.bin
+```
+If you've installed the correct version of the firmware for SDK 2.2, you should see:
+
+`FW_CommitID=0x196bb59f`
+
+That's all! you can boot the system with the module and SD card installed. Login with `root`.
