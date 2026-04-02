@@ -1,4 +1,4 @@
-# MemryX Yocto Recipes
+# MemryX Yocto Recipes for Renesas RZ/G3E
 
 This repo contains two recipes for integrating the MemryX SDK into a Yocto image.
 
