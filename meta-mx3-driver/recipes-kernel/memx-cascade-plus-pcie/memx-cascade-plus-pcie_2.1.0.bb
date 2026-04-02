@@ -8,14 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Proprietary;md5=0557f9d92cf58f2
 INSANE_SKIP:${PN} += "buildpaths"
 INSANE_SKIP:${PN}-dbg += "buildpaths"
 
-SRC_URI = " \
-    git://git@github.com/lindsay-morel/system_driver.git;protocol=ssh;branch=main \
-    file://cascade.bin \
-    file://cascade_4chips_flash.bin \
-    file://cascade_mini_bar_flash.bin \
-"
-
-SRCREV = "baf50d590b39ce03cd8a15cf5591b05d6e123a75"
+SRC_URI = "git://git@github.com/memryx/mx3_driver_pub.git;protocol=ssh;branch=sdk2p2"
+SRCREV = "9a8cb7532b3004c990f7909f5e57ddfc45dde2fa"
 
 S = "${WORKDIR}/git/kdriver/linux/pcie"
 
@@ -25,13 +19,43 @@ EXTRA_OEMAKE += "KERNEL_SRC=${STAGING_KERNEL_DIR} EXTRA_CFLAGS='-I${WORKDIR}/git
 
 KERNEL_MODULE_AUTOLOAD += "memx_cascade_plus_pcie"
 
+do_configure:prepend() {
+    # Add KERNEL_SRC variable after CONFIG_MODULE_SIG line
+    sed -i '/^CONFIG_MODULE_SIG=n/a KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build' ${S}/Makefile
+    
+    # Replace hardcoded kernel path with KERNEL_SRC variable
+    sed -i 's|/lib/modules/\$(shell uname -r)/build|\$(KERNEL_SRC)|g' ${S}/Makefile
+    
+    # Remove EXTRA_CFLAGS from driver target (keep it only in debug/android)
+    sed -i '/^driver:/,/^$/ s/EXTRA_CFLAGS="\$(INCLUDES)" //' ${S}/Makefile
+    
+    # Add modules_install target after android target
+    sed -i '/^android:/,/^$/ {
+        /modules$/ a\
+\nmodules_install:\n\tmake -C $(KERNEL_SRC) M=$(PWD) modules_install
+    }' ${S}/Makefile
+}
+
 do_install:append() {
     install -d ${D}${nonarch_base_libdir}/firmware
-    install -m 0644 ${WORKDIR}/cascade.bin ${D}${nonarch_base_libdir}/firmware/
-    install -m 0644 ${WORKDIR}/cascade_4chips_flash.bin ${D}${nonarch_base_libdir}/firmware/
-    install -m 0644 ${WORKDIR}/cascade_mini_bar_flash.bin ${D}${nonarch_base_libdir}/firmware/
+    install -m 0644 ${WORKDIR}/git/firmware/cascade.bin ${D}${nonarch_base_libdir}/firmware/
+    install -m 0644 ${WORKDIR}/git/firmware/cascade_4chips_flash.bin ${D}${nonarch_base_libdir}/firmware/
+    install -m 0644 ${WORKDIR}/git/firmware/cascade_mini_bar_flash.bin ${D}${nonarch_base_libdir}/firmware/
+
+    # Create and install power.conf
+    install -d ${D}${sysconfdir}/memryx
+    cat > ${D}${sysconfdir}/memryx/power.conf << 'EOF'
+# WARNING: manually editing this file is an extremely bad idea. Please don't.
+FREQ4C=500
+VOLT4C=690
+FREQ2C=700
+VOLT2C=725
+EOF
+    chmod 0644 ${D}${sysconfdir}/memryx/power.conf
 }
 
 FILES:${PN} += " \
     ${nonarch_base_libdir}/firmware/ \
+    ${sysconfdir}/memryx/power.conf \
+    ${bindir}/mx_set_powermode \
 "

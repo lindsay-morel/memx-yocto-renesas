@@ -8,8 +8,8 @@ INSANE_SKIP:${PN}-dbg += "already-stripped dev-elf"
 
 DEPENDS += "util-linux-libuuid"
 
-SRC_URI = "gitsm://github.com/lindsay-morel/MxAccl;protocol=https;branch=release"
-SRCREV = "093fc818a71366f843878784e76302d9b4ee1870"
+SRC_URI = "gitsm://github.com/memryx/MxAccl;protocol=https;branch=sdk2p2"
+SRCREV = "a10628141ecfb97c79b65b965e0cf7b1d5c6b082"
 
 S = "${WORKDIR}/git"
 
@@ -21,6 +21,10 @@ inherit systemd
 EXTRA_OECMAKE += "-DCMAKE_BUILD_TYPE=Packaging -DCMAKE_X86_FLAGS_BASE=0 -DCMAKE_X86_FLAGS_AVX2=0 -DCMAKE_AARCH64_FLAGS=0 -DCMAKE_RISCV_FLAGS=0 "
 
 do_configure:prepend() {
+    echo "Patching CMakeLists.txt to comment out -march flags on lines 72 and 76..."
+    sed -i '72s/ -march=/" # -march=/' ${S}/CMakeLists.txt
+    sed -i '76s/ -march=/" # -march=/' ${S}/CMakeLists.txt
+    
     echo "Copying libmemx header file to source..."
     install -d ${STAGING_INCDIR}/memx/
     install -m 0644 ${S}/misc/libmemx/memx.h ${STAGING_INCDIR}/memx/
@@ -54,6 +58,9 @@ do_install:append() {
     # Install systemd unit
     install -d ${D}${systemd_system_unitdir}
     install -m 0644 ${S}/debian_manager/mxa-manager.service ${D}${systemd_system_unitdir}/
+    
+    # Patch systemd service file to change User from mxa-manager to nobody
+    sed -i 's/User=mxa-manager/User=nobody/' ${D}${systemd_system_unitdir}/mxa-manager.service
 }
 
 SYSTEMD_SERVICE:${PN} = "mxa-manager.service"
