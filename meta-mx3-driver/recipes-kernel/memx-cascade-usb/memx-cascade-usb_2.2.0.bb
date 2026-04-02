@@ -8,7 +8,7 @@ INSANE_SKIP:${PN}-dbg += "buildpaths"
 
 # Example: Pull source from a Git repository. Adjust SRC_URI as needed.
 SRC_URI = "git://github.com/memryx/mx3_driver_pub;protocol=https;branch=release"
-SRCREV = "0073a547c8b7762cfbdcd67da8df9bb5f31d55e0"
+SRCREV = "b1ed73725a555d0aaf477042ab0f66f0099efd25"
 
 # Use the working directory provided by BitBake
 S = "${WORKDIR}/git/kdriver/linux/usb"

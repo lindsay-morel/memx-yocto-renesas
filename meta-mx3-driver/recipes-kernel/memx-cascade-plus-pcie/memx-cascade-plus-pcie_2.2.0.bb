@@ -8,8 +8,8 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Proprietary;md5=0557f9d92cf58f2
 INSANE_SKIP:${PN} += "buildpaths"
 INSANE_SKIP:${PN}-dbg += "buildpaths"
 
-SRC_URI = "git://git@github.com/memryx/mx3_driver_pub.git;protocol=ssh;branch=sdk2p2"
-SRCREV = "9a8cb7532b3004c990f7909f5e57ddfc45dde2fa"
+SRC_URI = "git://git@github.com/memryx/mx3_driver_pub.git;protocol=ssh;branch=release"
+SRCREV = "b1ed73725a555d0aaf477042ab0f66f0099efd25"
 
 S = "${WORKDIR}/git/kdriver/linux/pcie"
 

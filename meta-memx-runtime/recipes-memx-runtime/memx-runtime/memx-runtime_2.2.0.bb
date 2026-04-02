@@ -8,8 +8,8 @@ INSANE_SKIP:${PN}-dbg += "already-stripped dev-elf"
 
 DEPENDS += "util-linux-libuuid"
 
-SRC_URI = "gitsm://github.com/memryx/MxAccl;protocol=https;branch=sdk2p2"
-SRCREV = "a10628141ecfb97c79b65b965e0cf7b1d5c6b082"
+SRC_URI = "gitsm://github.com/memryx/MxAccl;protocol=https;branch=release"
+SRCREV = "3e6afe50815fa1ac23bf9ed2ff06b6d7d16e2398"
 
 S = "${WORKDIR}/git"
 
