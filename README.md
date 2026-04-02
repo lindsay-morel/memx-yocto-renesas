@@ -42,13 +42,13 @@ Next, within your Yocto build folder (`~/rzg3e_bsp_v1.0.0/build/`), take the fol
 ```bash
 cd conf
 ```
-If your build environment is sourced and Bitbake is active, you can add the layers as follows:
+If your build environment is sourced and Bitbake is active, you can add the layers as follows (be sure to adjust the paths as needed):
 
 ```bash
 bitbake-layers add-layer /path/to/memx-yocto-renesas/meta-memx-runtime
 bitbake-layers add-layer /path/to/memx-yocto-renesas/meta-mx3-driver
 ```
-Alternatively, you can open the `bblayers.conf` file and add the following two lines to the `BBLAYERS` section manually (be sure to adjust the paths as needed):
+Alternatively, you can open the `bblayers.conf` file and add the following two lines to the `BBLAYERS` section manually (again, adjust the paths according to your setup):
 
 ```bash
 /path/to/memx-yocto-renesas/meta-memx-runtime \
