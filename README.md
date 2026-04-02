@@ -27,77 +27,132 @@ To begin, refer to the Renesas-provided manual for building the BSP v1.0.0. You 
 
 https://www.renesas.com/en/document/gde/rzg3e-linux-start-guide-rev100
 
-The guide provides step-by-step instructions for getting your build environment set up. You will also need to download the BSP package from the following source:
+The necessary steps from the manual will be included in this file for convenience.
+
+Please download the BSP package from the following source:
 
 https://www.renesas.com/en/software-tool/rzg3e-board-support-package#download
 
-For now, we have not opted to build the graphics or video codec support packages but plan to test them in the near future.
+For now, we have not opted to build the graphics or video codec support packages but plan to include them in the near future.
 
-Follow the instructions in the manual until you have successfully completed Step 4 (Build initialize).
+1. Clone this repository onto the build/host system.
 
-Clone this repository onto the build/host system.
+```bash 
+git clone https://github.com/lindsay-morel/memx-yocto-renesas.git
+```
 
-Next, within your Yocto build folder (`~/rzg3e_bsp_v1.0.0/build/`), take the following actions:
+2. Set up the Renesas BSP build environment.
+
+First, install the necessary dependencies on your host system:
 
 ```bash
-cd conf
+sudo apt-get update 
+sudo apt install build-essential chrpath cpio debianutils diffstat file gawk \
+gcc git iputils-ping libacl1 liblz4-tool locales python3 python3-git \
+python3-jinja2 python3-pexpect python3-pip python3-subunit socat texinfo unzip \
+wget xz-utils zstd
 ```
-If your build environment is sourced and Bitbake is active, you can add the layers as follows (be sure to adjust the paths as needed):
+
+Run the commands below and set the username and email address before starting the build procedure. Without this setting, an error occurs when building procedure runs git command to apply patches:
+
+```bash
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
+
+Set the package version for the BSP as an environment variable:
+
+```bash 
+PACKAGE_VERSION=1.0.0
+```
+
+Create a working directory at your home directory, and decompress Yocto recipe package:
+
+```bash
+mkdir ~/rzg3e_bsp_v${PACKAGE_VERSION}
+cd ~/rzg3e_bsp_v${PACKAGE_VERSION}
+cp ../Downloads/RTK0EF0045Z0040AZJ-v${PACKAGE_VERSION}.zip .
+unzip ./RTK0EF0045Z0040AZJ-v${PACKAGE_VERSION}.zip
+tar zxvf ./RTK0EF0045Z0040AZJ-v${PACKAGE_VERSION}/rzg3e_bsp_v${PACKAGE_VERSION}.\
+tar.gz
+```
+
+**Note:** Your build environment must have 200GB of free hard drive space to complete the minimum build!
+
+Please initialize a build using the 'oe-init-build-env' script in Poky and point TEMPLATECONF to platform conf
+path:
+
+```bash
+TEMPLATECONF=$PWD/meta-renesas/meta-rz-distro/conf/templates/rz-conf/ source \
+poky/oe-init-build-env build
+```
+
+3. Add the MemryX layers into your build.
+
+Next, within your Yocto build folder (`~/rzg3e_bsp_v1.0.0/build/`), take the following actions.
+
+Assuming your build environment is sourced and Bitbake is active, you can add the MemryX layers to your `bblayers.conf` file as follows (be sure to adjust the paths according to where you cloned this repository):
 
 ```bash
 bitbake-layers add-layer /path/to/memx-yocto-renesas/meta-memx-runtime
 bitbake-layers add-layer /path/to/memx-yocto-renesas/meta-mx3-driver
 ```
-Alternatively, you can open the `bblayers.conf` file and add the following two lines to the `BBLAYERS` section manually (again, adjust the paths according to your setup):
 
-```bash
-/path/to/memx-yocto-renesas/meta-memx-runtime \
-/path/to/memx-yocto-renesas/meta-mx3-driver \
-```
-
-Next, open the file named `local.conf` and add the following lines at the end:
+Next, add the MemryX recipe targets to your `local.conf` file:
 
 ```bash 
-IMAGE_INSTALL:append = " memx-cascade-plus-pcie"
-IMAGE_INSTALL:append = " memx-runtime"
-IMAGE_INSTALL:append = " memx-bench"
+echo 'IMAGE_INSTALL:append = " memx-cascade-plus-pcie"' >> conf/local.conf
+echo 'IMAGE_INSTALL:append = " memx-runtime"' >> conf/local.conf
+echo 'IMAGE_INSTALL:append = " memx-bench"' >> conf/local.conf
 ```
-
-Note the leading spaces in the above three lines - this is an important syntax requirement for Yocto.
 
 Finally, a small device tree patch is needed to properly enable Legacy INTA interrupts on the platform. Copy the `pcie_legacy_fix.patch` file from this repository to your Renesas BSP folder at the following location:
 
 ```bash
-rzg3e_bsp_v1.0.0/meta-renesas/meta-rz-bsp/recipes-kernel/linux/files/
+cp ~/memx-yocto-renesas/pcie_legacy_fix.patch ~/rzg3e_bsp_v1.0.0/meta-renesas/meta-rz-bsp/recipes-kernel/linux/files/
 ```
-After the patch is placed at the above location, modify the file located at:
-
-```bash
-rzg3e_bsp_v1.0.0/meta-renesas/meta-rz-bsp/recipes-kernel/linux/linux-renesas_6.1.inc
-```
-
-Add the patch file to the `SRC_URI:append` section as follows:
+After the patch is copied, we should apply it as follows:
 
 ```bash 
-SRC_URI:append = " \
-	file://0001-gpu-drm-bridge-Add-ITE-it6263-LVDS-to-HDMI-bridge-dr.patch \
-	file://0002-arm64-defconfig-enable-LVDS-and-IT6263-LVSD-to-HDMI-.patch \
-	file://0003-arm64-dts-renesas-rzg3e-smarc-lvds-add-macro-to-sele.patch \
-	file://0004-arm64-dts-renesas-r9a09g047e54-smarc-enable-LVDS-sup.patch \
-	file://0005-gpu-drm-bridge-Support-S2R-ITE-it6263.patch \
-	file://pcie_legacy_fix.patch \
-"
+sed -i '/file:\/\/0005-gpu-drm-bridge-Support-S2R-ITE-it6263.patch \\/a\	file://pcie_legacy_fix.patch \\' ~/rzg3e_bsp_v1.0.0/meta-renesas/meta-rz-bsp/recipes-kernel/linux/linux-renesas_6.1.inc
 ```
+4. Build the image!
 
-Return to the build folder and build the image as follows:
+From your build folder, execute the following command to build the image. Note that this can take around 1 hour to complete, depending on the host system specs.
 
 ```bash
 MACHINE=smarc-rzg3e bitbake core-image-minimal
 ```
 
-Upon build completion, refer to the Renesas manual for details on installing the image onto your SD card.
+5. Copy the image to your microSD card.
 
-Before booting the RZ/G#E system, ensure that the VMX-004 M.2 module has been flashed with the appropriate firmware version. Download the `cascade_4chips_flash.bin` file from the following link:
+Install `bmap-tools` package if you don't have it already:
+
+```bash 
+sudo apt install bmap-tools
+```
+Insert the microSD card into your host PC and check its mount device name using the fdisk command. 
+
+```bash
+sudo fdisk -l
+```
+If, for example, your microSD is assigned to `/dev/sda`, unmount any partitions which are currently mounted. For example:
+
+```bash 
+umount /dev/sda2
+```
+
+Now, navigate to the directory where the image was built and copy it to the microSD as follows:
+
+```bash
+cd tmp/deploy/images/smarc-rzg3e/
+sudo bmaptool copy --bmap <wic_image>.wic.bmap <wic _image>.wic.gz /dev/sda
+```
+When the copy completes, you can remove the microSD and install it on the SOM.
+
+6. Additional preparation before booting...
+
+Before booting the RZ/G3E system, ensure that the VMX-004 M.2 module has been flashed with the appropriate firmware version. Download the `cascade_4chips_flash.bin` file from the following link:
 
 https://github.com/memryx/mx3_driver_pub/tree/sdk2p2/firmware
 
