@@ -35,13 +35,13 @@ https://www.renesas.com/en/software-tool/rzg3e-board-support-package#download
 
 For now, we have not opted to build the graphics or video codec support packages but plan to include them in the near future.
 
-1. Clone this repository onto the build/host system.
+# 1. Clone this repository onto the build/host system.
 
 ```bash 
 git clone https://github.com/lindsay-morel/memx-yocto-renesas.git
 ```
 
-2. Set up the Renesas BSP build environment.
+# 2. Set up the Renesas BSP build environment.
 
 First, install the necessary dependencies on your host system:
 
@@ -87,7 +87,7 @@ TEMPLATECONF=$PWD/meta-renesas/meta-rz-distro/conf/templates/rz-conf/ source \
 poky/oe-init-build-env build
 ```
 
-3. Add the MemryX layers into your build.
+# 3. Add the MemryX layers into your build.
 
 Next, within your Yocto build folder (`~/rzg3e_bsp_v1.0.0/build/`), take the following actions.
 
@@ -116,7 +116,7 @@ After the patch is copied, we should apply it as follows:
 ```bash 
 sed -i '/file:\/\/0005-gpu-drm-bridge-Support-S2R-ITE-it6263.patch \\/a\	file://pcie_legacy_fix.patch \\' ~/rzg3e_bsp_v1.0.0/meta-renesas/meta-rz-bsp/recipes-kernel/linux/linux-renesas_6.1.inc
 ```
-4. Build the image!
+# 4. Build the image!
 
 From your build folder, execute the following command to build the image. Note that this can take around 1 hour to complete, depending on the host system specs.
 
@@ -124,7 +124,7 @@ From your build folder, execute the following command to build the image. Note t
 MACHINE=smarc-rzg3e bitbake core-image-minimal
 ```
 
-5. Copy the image to your microSD card.
+# 5. Copy the image to your microSD card.
 
 Install `bmap-tools` package if you don't have it already:
 
@@ -150,7 +150,7 @@ sudo bmaptool copy --bmap <wic_image>.wic.bmap <wic _image>.wic.gz /dev/sda
 ```
 When the copy completes, you can remove the microSD and install it on the SOM.
 
-6. Additional preparation before booting...
+# 6. Additional preparation before booting...
 
 Before booting the RZ/G3E system, ensure that the VMX-004 M.2 module has been flashed with the appropriate firmware version. Download the `cascade_4chips_flash.bin` file from the following link:
 
