@@ -63,6 +63,8 @@ IMAGE_INSTALL:append = " memx-runtime"
 IMAGE_INSTALL:append = " memx-bench"
 ```
 
+Note the leading spaces in the above three lines - this is an important syntax requirement for Yocto.
+
 Finally, a small device tree patch is needed to properly enable Legacy INTA interrupts on the platform. Copy the `pcie_legacy_fix.patch` file from this repository to your Renesas BSP folder at the following location:
 
 ```bash
