@@ -29,7 +29,7 @@ https://www.renesas.com/en/document/gde/rzg3e-linux-start-guide-rev100
 
 The necessary steps from the manual will be included in this file for convenience.
 
-Please download the BSP package from the following source:
+Please download the BSP from the following source (filename `RTK0EF0045Z0040AZJ-v1.0.0.zip`):
 
 https://www.renesas.com/en/software-tool/rzg3e-board-support-package#download
 
