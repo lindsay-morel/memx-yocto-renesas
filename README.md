@@ -154,7 +154,7 @@ When the copy completes, you can remove the microSD and install it on the SOM.
 
 Before booting the RZ/G3E system, ensure that the VMX-004 M.2 module has been flashed with the appropriate firmware version. Download the `cascade_4chips_flash.bin` file from the following link:
 
-https://github.com/memryx/mx3_driver_pub/tree/sdk2p2/firmware
+[https://github.com/memryx/mx3_driver_pub/tree/sdk2p2/firmware](https://github.com/memryx/mx3_driver_pub/tree/release/firmware)
 
 Then, flash the module as follows:
 
@@ -165,4 +165,4 @@ If you've installed the correct version of the firmware for SDK 2.2, you should 
 
 `FW_CommitID=0x196bb59f`
 
-That's all! you can boot the system with the module and SD card installed. Login with `root`.
+That's all! You can boot the system with the module and SD card installed. Login with `root`.
