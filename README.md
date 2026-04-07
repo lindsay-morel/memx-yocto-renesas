@@ -238,7 +238,7 @@ I might recommend saving the path to your environment somewhere safe in case you
 
 ### 4. Clone the source code for the sample application.
 
-Once your environment is sourced, clone the sample application repository in your home directory (be sure to use the same shell wherein you've sourced the SDK environment!):
+Once your environment is sourced, clone the [sample application repository](https://github.com/lindsay-morel/memx_test_app) in your home directory (be sure to use the same shell wherein you've sourced the SDK environment!):
 
 ```bash
 cd ~
