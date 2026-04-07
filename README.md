@@ -85,6 +85,8 @@ Download the graphics and video codec packages at the following link:
 
 https://www.renesas.com/en/software-tool/rzg3e-board-support-package#overview
 
+Please note that you will need to be signed into a valid MyRenesas account to access these downloads. Reach out if you have trouble with this.
+
 Unload the graphics package:
 
 ```bash
@@ -101,8 +103,7 @@ unzip ./RTK0EF0207Z00001ZJ-v4.4.0.0_rzg3e_EN.zip
 tar zxvf ./RTK0EF0207Z00001ZJ-v4.4.0.0_rzg3e_EN/meta-rz-features_codec_v4.4.0.0.tar.gz
 ```
 
-Please initialize a build using the 'oe-init-build-env' script in Poky and point TEMPLATECONF to platform conf
-path:
+Please initialize a build using the 'oe-init-build-env' script in Poky and point `TEMPLATECONF` to platform conf path:
 
 ```bash
 TEMPLATECONF=$PWD/meta-renesas/meta-rz-distro/conf/templates/rz-conf/ source \
@@ -212,7 +213,11 @@ To begin, run the following command from your sourced build environment (`~/rzg3
 MACHINE=smarc-rzg3e bitbake core-image-weston -c populate_sdk
 ```
 
-This build will take several minutes to complete, depending on your host system. When it completes, you'll need to run the SDK installer script as follows:
+This build will take several minutes to complete, depending on your host system. 
+
+### 2. Install the SDK.
+
+When the build completes, you'll need to run the SDK installer script as follows:
 
 ```bash
 cd tmp/deploy/sdk
@@ -221,29 +226,41 @@ sudo sh rz-vlp-glibc-x86_64-core-image-weston-cortexa55-smarc-rzg3e-toolchain-5.
 
 You'll be asked to provide a target directory for the SDK - unless you have a strong preference here, it's okay to proceed with the default by pressing `Enter`. Please also confirm the installation by typing `Y` when prompted. Installation should take just a few moments.
 
+### 3. Source the SDK environment.
+
 You'll be given a path which needs to be sourced every time you wish to use the SDK in a new shell session. Source that environment before proceeding. For example:
 
 ```bash 
-source <>
+source /opt/rz-vlp/5.0.8/environment-setup-cortexa55-poky-linux
 ```
 
 I might recommend saving the path to your environment somewhere safe in case you forget - it's easy to lose track!
+
+### 4. Clone the source code for the sample application.
 
 Once your environment is sourced, clone the sample application repository in your home directory (be sure to use the same shell wherein you've sourced the SDK environment!):
 
 ```bash
 cd ~
-git clone <>
+git clone https://github.com/lindsay-morel/memx_test_app.git
 ```
-Then, follow these steps to cross-compile the application:
+
+### 5. Cross-compile the executable using the SDK environment.
+
+Follow these steps to cross-compile the application:
 
 ```bash
-cd sample_app
+cd memx_test_app
 mkdir build && cd build
 cmake ..
 make
 ```
-The target `main`, will be built in the `build/` directory. Now, you need to copy the target to your microSD. Plug in the microSD to your Linux host, and mount the `ext3` partition as follows:
+
+The executable, `main`, will be created in the `build/` directory. 
+
+### 6. Copy the executable to your microSD card.
+
+Now, you need to copy the executable to your microSD. Plug in the microSD to your Linux host, and mount the `ext3` partition as follows (note that `/dev/sda2` is an example - your path may vary):
 
 ```bash
 sudo mount /dev/sda2 /media/
@@ -253,6 +270,8 @@ sudo chmod +x main
 ```
 
 The above commands copy the executable onto the RZ/G3E filesystem. You can now reinstall the microSD onto the SOM and boot.
+
+### 7. Run the application!
 
 Once the system is running, open a terminal. Run the following commands to download and extract the DFP:
 
@@ -267,6 +286,6 @@ Then, run the following to start the application (assuming you have a USB camera
 /usr/bin/main --video_paths cam:0 -d YOLO_v8_small_640_640_3_onnx.dfp --show
 ```
 
-Optionally, you can forego rendering by omitting the `--show` flag. Use `CTRL + C` to quit the application. 
+Optionally, you can forego rendering by omitting the `--show` flag. Use `CTRL+C` to quit the application. 
 
 We hope this guide serves as a helpful reference for application development on the RZ/G3E platform. Please reach out with any questions or concerns!
