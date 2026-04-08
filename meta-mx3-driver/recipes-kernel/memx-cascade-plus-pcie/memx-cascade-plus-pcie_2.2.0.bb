@@ -8,7 +8,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/Proprietary;md5=0557f9d92cf58f2
 INSANE_SKIP:${PN} += "buildpaths"
 INSANE_SKIP:${PN}-dbg += "buildpaths"
 
-SRC_URI = "git://git@github.com/memryx/mx3_driver_pub.git;protocol=ssh;branch=release"
+SRC_URI = "git://git@github.com/memryx/mx3_driver_pub.git;protocol=ssh;branch=release \
+           file://mx_set_powermode \
+          "
 SRCREV = "b1ed73725a555d0aaf477042ab0f66f0099efd25"
 
 S = "${WORKDIR}/git/kdriver/linux/pcie"
@@ -52,6 +54,10 @@ FREQ2C=700
 VOLT2C=725
 EOF
     chmod 0644 ${D}${sysconfdir}/memryx/power.conf
+
+    # Install mx_set_powermode script
+    install -d ${D}${bindir}
+    install -m 0755 ${WORKDIR}/mx_set_powermode ${D}${bindir}/mx_set_powermode
 }
 
 FILES:${PN} += " \

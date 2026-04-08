@@ -138,6 +138,13 @@ echo 'IMAGE_INSTALL:append = " opencv gstreamer1.0 gstreamer1.0-plugins-base gst
 echo 'IMAGE_INSTALL:append = " gstreamer1.0-omx gstreamer1.0-plugin-vspmfilter"' >> conf/local.conf
 ```
 
+Additionally please add `sudo` and `dialog` to the image to support our `mx_set_powermode` tool:
+
+```bash
+echo 'IMAGE_INSTALL:append = " dialog"' >> conf/local.conf
+echo 'IMAGE_INSTALL:append = " sudo"' >> conf/local.conf
+```
+
 Finally, a small device tree patch is needed to properly enable Legacy INTA interrupts on the platform. Copy the `pcie_legacy_fix.patch` file from this repository to your Renesas BSP folder at the following location:
 
 ```bash
