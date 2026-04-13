@@ -58,10 +58,14 @@ EOF
     # Install mx_set_powermode script
     install -d ${D}${bindir}
     install -m 0755 ${WORKDIR}/mx_set_powermode ${D}${bindir}/mx_set_powermode
+
+    # Install PCIe flash update tool
+    install -m 0755 ${WORKDIR}/git/tools/flash_update_tool/bin/aarch64/pcieupdateflash ${D}${bindir}/mxfw_pcie_update_flash
 }
 
 FILES:${PN} += " \
     ${nonarch_base_libdir}/firmware/ \
     ${sysconfdir}/memryx/power.conf \
     ${bindir}/mx_set_powermode \
+    ${bindir}/mxfw_pcie_update_flash \
 "
